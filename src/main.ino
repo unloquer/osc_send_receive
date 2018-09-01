@@ -3,16 +3,23 @@
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <Ticker.h>
-
+#include <WiFiManager.h>
 // network ettings --------------
 //
 
-char ssid[] = "C3P";//"TC";
-char psswd[] = "trespatios";//"chOc0l4t1n4";
-
+char ssid[] = "PGP";
+char psswd[] = "oasis2018";
+IPAddress ip(192, 168, 1, 116);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
 WiFiUDP Udp;
-const IPAddress outIp(192,168,0,131);
-const unsigned int outPort = 4000;
+
+// ip add list: 145, 133, 165, 186
+const IPAddress outIp(192,168,1,133);
+const IPAddress outIp1(192,168,1,145);
+const IPAddress outIp2(192,168,1,165);
+const IPAddress outIp3(192,168,1,186);
+const unsigned int outPort = 4001;
 const unsigned int localPort = 4001;
 
 // osc settings
@@ -30,7 +37,8 @@ void handle_movement();
 
 // ticker
 Ticker handleMicrowave(handle_movement, 1000);
-
+// led strip vars
+float wichStrip;
 
 
 void setup(){
@@ -43,6 +51,8 @@ void setup(){
   handleMicrowave.start();
 
 
+  // Static IP Setup Info Here...
+//  WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid,psswd);
 
   while(WiFi.status() != WL_CONNECTED) {
@@ -75,7 +85,7 @@ void handle_movement () {
     numberOfInterrupts ++;
     sensor_state = HIGH;
     interruptCounter = 0; // reset de interrupt counter
-
+    wichStrip = random(3);
     yield();
 
   }else {
@@ -95,7 +105,7 @@ void listen_osc_messages(OSCMessage &inc_msg) {
 //-----------
 void loop() {
 
-Serial.println(interruptCounter);
+//Serial.println(interruptCounter);
   handleMicrowave.update();
   digitalWrite(statePin, sensor_state);
   /*  digitalWrite(interrupPin, HIGH);
@@ -105,13 +115,34 @@ Serial.println(interruptCounter);
 
 
 
+if(sensor_state == HIGH) {
 
-  OSCMessage msg("/touche/1");
+  OSCMessage msg("/gesto/1");
   msg.add(sensor_state);
-     Udp.beginPacket(outIp, outPort);
-     msg.send(Udp);
-     Udp.endPacket();
-     msg.empty(); 
+
+      Udp.beginPacket(outIp, outPort);
+      msg.send(Udp);
+      Udp.endPacket(); 
+
+      Udp.beginPacket(outIp1, outPort);
+      msg.send(Udp);
+      Udp.endPacket();
+      
+    
+      Udp.beginPacket(outIp2, outPort);
+      msg.send(Udp);
+      Udp.endPacket();
+      
+    
+      Udp.beginPacket(outIp3, outPort);
+      msg.send(Udp);
+      Udp.endPacket();
+
+      
+
+      msg.empty();
+  
+}
   //  msg.add(my_data_handler.test.at(2));
   /*
      msg.add(my_data_handler.getData());
@@ -137,10 +168,10 @@ Serial.println(interruptCounter);
 
       inc_msg.fill(Udp.read());
     }
-    if (!msg.hasError()) {
+    if (!inc_msg.hasError()) {
      inc_msg.dispatch("/gesto/1",listen_osc_messages );
     } else {
-      error = msg.getError();
+      error = inc_msg.getError();
       /*      Serial.print("error: ");
               Serial.println(error);*/
     }

@@ -1,0 +1,39 @@
+{
+    "name": "Ticker", 
+    "repository": {
+        "url": "https://github.com/sstaub/Ticker", 
+        "type": "git"
+    }, 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "intel_arc32", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "3.1.4", 
+    "authors": [
+        {
+            "maintainer": false, 
+            "name": "sstaub", 
+            "url": "https://github.com/sstaub", 
+            "email": null
+        }
+    ], 
+    "keywords": [
+        "threads", 
+        "ticker", 
+        "timer"
+    ], 
+    "id": 1586, 
+    "description": "A library for creating Tickers which can call repeatly functions. Replaces delay() with non-blocking functions."
+}
